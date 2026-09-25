@@ -1,8 +1,8 @@
-// Offline support for Daily No.
+// Offline support for TreasureChestNo.
 // Pages and app files: try the network first so new phrases show up
 // straight away, fall back to the cached copy when offline.
 // Google Fonts: cache on first use, then serve from cache.
-const CACHE = "daily-no-v3";
+const CACHE = "treasure-chest-no-v1";
 const SHELL = [
   "./",
   "index.html",

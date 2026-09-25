@@ -1,13 +1,13 @@
 # TreasureSayNo
 An app to help Sarah
 
-**Daily No** gives you a new way to say no each day. It's a small web app built to be added to an iPhone home screen, where it opens full-screen like a regular app and works offline.
+**TreasureChestNo** gives you a new way to say no each day. It's a small web app built to be added to an iPhone home screen, where it opens full-screen like a regular app and works offline.
 
 ## Using it on an iPhone
 
 1. Open the app's address in Safari.
 2. Tap **Share**, then **Add to Home Screen**.
-3. Open it from the new **Daily No** icon.
+3. Open it from the new **TreasureChestNo** icon.
 
 ## How it works
 
@@ -21,7 +21,7 @@ Phrases live in the `NOS` list in `index.html`. Each one has the phrase, a tone 
 
 When you add one, also add its position (its index in `NOS`) somewhere in the `ORDER` list just below it. `ORDER` sets which phrase shows on which day.
 
-Then bump `CACHE` in `sw.js` (for example `daily-no-v1` to `daily-no-v2`) so phones that have the app installed drop the old copy.
+Then bump `CACHE` in `sw.js` (for example `treasure-chest-no-v1` to `treasure-chest-no-v2`) so phones that have the app installed drop the old copy.
 
 ## Files
 
