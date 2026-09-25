@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daily No</title>
+<meta name="description" content="A new way to say no, every day.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Daily No">
+<meta name="theme-color" content="#EEF1F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E1318" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --ground: #EEF1F4;
+    --paper: #FFFFFF;
+    --ink: #141B24;
+    --muted: #5B6673;
+    --line: #D5DBE2;
+    --stop: #C8102E;
+    --stop-soft: #FBE7EA;
+    --shadow: 0 1px 0 rgba(20,27,36,.04), 0 12px 32px -12px rgba(20,27,36,.18);
+    --display: "Bricolage Grotesque", "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0E1318;
+      --paper: #171E26;
+      --ink: #EDF1F5;
+      --muted: #93A0AE;
+      --line: #2A333E;
+      --stop: #FF5A6E;
+      --stop-soft: #3A1C22;
+      --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0E1318;
+    --paper: #171E26;
+    --ink: #EDF1F5;
+    --muted: #93A0AE;
+    --line: #2A333E;
+    --stop: #FF5A6E;
+    --stop-soft: #3A1C22;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 12px 32px -12px rgba(0,0,0,.6);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    -webkit-text-size-adjust: 100%;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--display);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px));
+    padding-block: calc(20px + env(safe-area-inset-top, 0px)) calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  .app {
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .octagon {
+    width: 26px; height: 26px;
+    background: var(--stop);
+    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+    display: grid; place-items: center;
+    color: #fff; font-size: 9px; font-weight: 800; letter-spacing: .04em;
+  }
+  .streak {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  /* Tear-off calendar page */
+  .page {
+    background: var(--paper);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-top {
+    background: var(--stop);
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 12px 18px 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .perf {
+    height: 10px;
+    background:
+      radial-gradient(circle at 5px 0, var(--ground) 3px, transparent 3.5px) 0 0 / 14px 10px repeat-x;
+  }
+  .page-body {
+    padding: 10px 22px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 330px;
+  }
+  .dayrow {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .daynum {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: .9;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .weekday {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    text-align: right;
+    line-height: 1.5;
+  }
+  .rule { height: 1px; background: var(--line); }
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+  }
+  .phrase {
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    text-wrap: balance;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-size: var(--phrase-size, 44px);
+    transition: opacity .25s ease, transform .25s ease;
+    white-space: pre-line;
+  }
+  .phrase.swap { opacity: 0; transform: translateY(6px); }
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tone {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--stop-soft);
+    color: var(--stop);
+    letter-spacing: .04em;
+  }
+  .use {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 52px 1fr 52px;
+    gap: 10px;
+  }
+  button {
+    font: inherit;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    border-radius: 12px;
+    min-height: 52px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  button:focus-visible { outline: 3px solid var(--stop); outline-offset: 2px; }
+  button:active { transform: scale(.98); }
+  button:disabled { opacity: .35; cursor: default; transform: none; }
+  .primary {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .arrow { font-size: 22px; font-weight: 600; }
+  .today-link {
+    background: none;
+    border: 0;
+    min-height: 32px;
+    color: var(--stop);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    justify-self: center;
+  }
+
+  details {
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+  }
+  summary {
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 0;
+    list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: " +"; }
+  details[open] summary::after { content: " –"; }
+  .all {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .all li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .all li.current { color: var(--stop); font-weight: 600; }
+  .all .t {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    white-space: nowrap;
+  }
+  .all li > span:first-child { white-space: pre-line; }
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    transform: translate(-50%, 20px);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  @media (prefers-reduced-motion: reduce) {
+    .phrase, .toast { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand"><span class="octagon" aria-hidden="true">NO</span>Daily No</div>
+    <div class="streak" id="count"></div>
+  </header>
+
+  <article class="page" aria-live="polite">
+    <div class="page-top"><span id="month"></span><span id="year"></span></div>
+    <div class="perf" aria-hidden="true"></div>
+    <div class="page-body">
+      <div class="dayrow">
+        <div class="daynum" id="daynum"></div>
+        <div class="weekday" id="weekday"></div>
+      </div>
+      <div class="rule"></div>
+      <div class="kicker" id="kicker">Today's no</div>
+      <p class="phrase" id="phrase"></p>
+      <div class="meta">
+        <span class="tone" id="tone"></span>
+      </div>
+      <p class="use" id="use"></p>
+    </div>
+  </article>
+
+  <div class="actions">
+    <button class="arrow" id="prev" type="button" aria-label="Previous day">‹</button>
+    <button class="primary" id="copy" type="button">Copy today's no</button>
+    <button class="arrow" id="next" type="button" aria-label="Next day">›</button>
+  </div>
+  <button class="today-link" id="today" type="button" hidden>Back to today</button>
+
+  <details>
+    <summary id="all-label">All the ways to say no</summary>
+    <ul class="all" id="all"></ul>
+  </details>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+  const NOS = [
+    { text: "Not this time.", tone: "Polite", use: "Leaves the door open for next time without promising anything." },
+    { text: "I'll pass.", tone: "Short", use: "Two words. No reason owed." },
+    { text: "I'm afraid not.", tone: "Polite", use: "Sounds sorry. Isn't changing its mind." },
+    { text: "No thank you.", tone: "Polite", use: "The classic. Works on waiters, salespeople and relatives." },
+    { text: "I don't think so.", tone: "Firm", use: "Soft on the surface, a closed door underneath." },
+    { text: "That's not something I can agree to.", tone: "Professional", use: "For contracts, scope creep and anything in writing." },
+    { text: "That won't work for me.", tone: "Firm", use: "Makes it about your limits, so there's nothing to argue with." },
+    { text: "I can't commit to that timeline responsibly.", tone: "Professional", use: "For the deadline that was set before anyone asked you." },
+    { text: "I'm not the right person to join this meeting, but I'm happy to share input beforehand.", tone: "Professional", use: "Declines the invite, keeps the goodwill. Your calendar says thanks." },
+    { text: "Nah.", tone: "Casual", use: "For friends, family and anyone who's earned the shorthand." },
+    { text: "I can see how that's a problem. But I can't see how it's MY problem.", tone: "Cheeky", use: "Sympathy acknowledged. Responsibility returned to sender." },
+    { text: "That's not the dumbest idea I've ever heard, but it's close.", tone: "Cheeky", use: "Only for people who'll laugh. Know your audience." },
+    { text: "Would you like a short or a long answer?\nShort answer: no.\nLong answer: noooooo.", tone: "Cheeky", use: "Let them pick. Both roads lead to the same place." },
+    { text: "If today was opposite day, I'd say 'yes'.", tone: "Cheeky", use: "Technically a yes. Just not on any day that exists." },
+    { text: "Would you like me to say no now? Or would you prefer if I said no tomorrow, after I've thought about it?", tone: "Cheeky", use: "Offers a choice of timing. The answer is the same either way." },
+    { text: "Yeah - NAH.", tone: "Casual", use: "The Kiwi classic. The yeah is only there to soften the nah." },
+    { text: "I'll do that in my 25th hour today.", tone: "Cheeky", use: "Happy to help, as soon as the day grows an extra hour." },
+    { text: "Maybe next time.", tone: "Polite", use: "Friendly, open-ended, and commits to nothing." },
+    { text: "When you have worked out a way without me, let me know.", tone: "Cheeky", use: "Sounds supportive. Actually hands the whole thing back." },
+    { text: "Rain check?", tone: "Casual", use: "A no dressed up as a maybe later." },
+    { text: "That sounds like a great job for...", tone: "Cheeky", use: "Finish the sentence with anyone who isn't you." },
+    { text: "My head says yes, my heart says no. On this one, I'm going with my heart.", tone: "Polite", use: "Makes it sound like a hard decision, even when it wasn't." },
+    { text: "That's not a good fit for me.", tone: "Professional", use: "Clean, neutral and hard to argue with." },
+    { text: "My schedule is already full.", tone: "Professional", use: "A fact, not an excuse. No follow-up needed." },
+    { text: "I'm so bummed, as my plate is so full right now.", tone: "Casual", use: "Sounds disappointed. Plate stays exactly as full." },
+    { text: "Wish I could, much hugs and good luck with it!", tone: "Polite", use: "A no wrapped in a hug. Very hard to be annoyed at." },
+    { text: "I have a prior engagement with my peace of mind.", tone: "Cheeky", use: "The one appointment that never gets moved." },
+    { text: "For fuck's sake. No!", tone: "Blunt", use: "For when every other no on this list has already been tried." },
+    { text: "Love the idea, but I can't commit.", tone: "Polite", use: "Compliments the idea, declines the work." },
+    { text: "Cheering for you from afar on this one.", tone: "Polite", use: "Full support, from a comfortable distance." }
+  ];
+
+  // Fixed shuffle so the list doesn't just run top to bottom, and
+  // similar tones don't land on back-to-back days.
+  const ORDER = [13,  22,  29,  16,  4,  14,  27,  11,  19,  3,  12,  21,  26,  24,  20,  9,  7,  25,  10,  28,  6,  8,  2,  23,  0,  15,  5,  18,  17,  1];
+  const DAY_MS = 86400000;
+
+  const el = id => document.getElementById(id);
+  const todayKey = () => {
+    const d = new Date();
+    return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY_MS);
+  };
+  const noFor = key => NOS[ORDER[((key % ORDER.length) + ORDER.length) % ORDER.length]];
+
+  let offset = 0;
+
+  function render(animate) {
+    const key = todayKey() + offset;
+    const date = new Date(key * DAY_MS);
+    const no = noFor(key);
+    const opts = { timeZone: "UTC" };
+
+    el("month").textContent = date.toLocaleDateString(undefined, { ...opts, month: "long" });
+    el("year").textContent = date.toLocaleDateString(undefined, { ...opts, year: "numeric" });
+    el("daynum").textContent = date.toLocaleDateString(undefined, { ...opts, day: "numeric" });
+    el("weekday").innerHTML = date.toLocaleDateString(undefined, { ...opts, weekday: "long" }) +
+      "<br>" + (offset === 0 ? "Today" : offset === -1 ? "Yesterday" : offset === 1 ? "Tomorrow" :
+        (offset < 0 ? -offset + " days ago" : "In " + offset + " days"));
+    el("kicker").textContent = offset === 0 ? "Today's no" : offset < 0 ? "That day's no" : "Coming up";
+    el("copy").textContent = offset === 0 ? "Copy today's no" : "Copy this no";
+    el("today").hidden = offset === 0;
+    el("count").textContent = "No. " + (NOS.indexOf(no) + 1) + " of " + NOS.length;
+
+    const phrase = el("phrase");
+    const set = () => {
+      phrase.textContent = no.text;
+      const len = no.text.length;
+      phrase.style.setProperty("--phrase-size", len < 16 ? "52px" : len < 30 ? "40px" : len < 50 ? "32px" : "26px");
+      el("tone").textContent = no.tone;
+      el("use").textContent = no.use;
+      phrase.classList.remove("swap");
+    };
+    if (animate) { phrase.classList.add("swap"); setTimeout(set, 180); } else set();
+
+    el("all-label").textContent = "All " + NOS.length + " ways to say no";
+    const list = el("all");
+    list.innerHTML = "";
+    NOS.forEach(n => {
+      const li = document.createElement("li");
+      if (n === no) li.className = "current";
+      const t = document.createElement("span");
+      t.textContent = n.text;
+      const tone = document.createElement("span");
+      tone.className = "t";
+      tone.textContent = n.tone;
+      li.append(t, tone);
+      list.append(li);
+    });
+  }
+
+  let toastTimer;
+  function toast(msg) {
+    const t = el("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove("show"), 1600);
+  }
+
+  el("prev").addEventListener("click", () => { offset--; render(true); });
+  el("next").addEventListener("click", () => { offset++; render(true); });
+  el("today").addEventListener("click", () => { offset = 0; render(true); });
+  el("copy").addEventListener("click", () => {
+    const text = noFor(todayKey() + offset).text;
+    navigator.clipboard.writeText(text).then(
+      () => toast("Copied. Go say no."),
+      () => {
+        const range = document.createRange();
+        range.selectNodeContents(el("phrase"));
+        const sel = getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        toast("Selected. Tap Copy to finish.");
+      }
+    );
+  });
+
+  // Swipe left/right on the page to change day.
+  let startX = null;
+  const page = document.querySelector(".page");
+  page.addEventListener("touchstart", e => { startX = e.touches[0].clientX; }, { passive: true });
+  page.addEventListener("touchend", e => {
+    if (startX === null) return;
+    const dx = e.changedTouches[0].clientX - startX;
+    startX = null;
+    if (Math.abs(dx) > 50) { offset += dx < 0 ? 1 : -1; render(true); }
+  });
+
+  // Roll over at midnight if the app is left open.
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) render(false);
+  });
+
+  render(false);
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
+</script>
+</body>
+</html>
