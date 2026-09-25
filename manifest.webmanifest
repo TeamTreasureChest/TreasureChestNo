@@ -1,6 +1,6 @@
 {
-  "name": "Daily No",
-  "short_name": "Daily No",
+  "name": "TreasureChestNo",
+  "short_name": "TreasureChestNo",
   "description": "A new way to say no, every day.",
   "start_url": "./",
   "scope": "./",
