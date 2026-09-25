@@ -23,6 +23,10 @@ When you add one, also add its position (its index in `NOS`) somewhere in the `O
 
 Then bump `CACHE` in `sw.js` (for example `treasure-chest-no-v1` to `treasure-chest-no-v2`) so phones that have the app installed drop the old copy.
 
+## iPhone app
+
+There's also a native iOS version in the [`ios/`](ios/) folder, with a daily notification and an option to hide phrases with swearing. See [`ios/README.md`](ios/README.md) for how to run it.
+
 ## Files
 
 | File | What it is |
