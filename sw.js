@@ -2,7 +2,7 @@
 // Pages and app files: try the network first so new phrases show up
 // straight away, fall back to the cached copy when offline.
 // Google Fonts: cache on first use, then serve from cache.
-const CACHE = "daily-no-v2";
+const CACHE = "daily-no-v3";
 const SHELL = [
   "./",
   "index.html",
