@@ -362,14 +362,18 @@
     { text: "I can't commit to that timeline responsibly.", tone: "Professional", use: "For the deadline that was set before anyone asked you." },
     { text: "I'm not the right person to join this meeting, but I'm happy to share input beforehand.", tone: "Professional", use: "Declines the invite, keeps the goodwill. Your calendar says thanks." },
     { text: "Nah.", tone: "Casual", use: "For friends, family and anyone who's earned the shorthand." },
-    { text: "I can see how that's a problem. But I can't see how it's my problem.", tone: "Cheeky", use: "Sympathy acknowledged. Responsibility returned to sender." },
+    { text: "I can see how that's a problem. But I can't see how it's MY problem.", tone: "Cheeky", use: "Sympathy acknowledged. Responsibility returned to sender." },
     { text: "That's not the dumbest idea I've ever heard, but it's close.", tone: "Cheeky", use: "Only for people who'll laugh. Know your audience." },
-    { text: "Would you like a short or a long answer?\nShort answer: no.\nLong answer: noooooo.", tone: "Cheeky", use: "Let them pick. Both roads lead to the same place." }
+    { text: "Would you like a short or a long answer?\nShort answer: no.\nLong answer: noooooo.", tone: "Cheeky", use: "Let them pick. Both roads lead to the same place." },
+    { text: "If today was opposite day, I'd say 'yes'.", tone: "Cheeky", use: "Technically a yes. Just not on any day that exists." },
+    { text: "Would you like me to say no now? Or would you prefer if I said no tomorrow, after I've thought about it?", tone: "Cheeky", use: "Offers a choice of timing. The answer is the same either way." },
+    { text: "Yeah - NAH.", tone: "Casual", use: "The Kiwi classic. The yeah is only there to soften the nah." },
+    { text: "I'll do that in my 25th hour today.", tone: "Cheeky", use: "Happy to help, as soon as the day grows an extra hour." }
   ];
 
   // Fixed shuffle so the list doesn't just run top to bottom, and
   // similar tones don't land on back-to-back days.
-  const ORDER = [3, 10, 6, 0, 8, 9, 4, 11, 1, 7, 2, 12, 5];
+  const ORDER = [3, 10, 6, 0, 13, 8, 9, 14, 4, 1, 11, 7, 15, 16, 2, 12, 5];
   const DAY_MS = 86400000;
 
   const el = id => document.getElementById(id);
