@@ -13,7 +13,7 @@
 - Each date gets one phrase, based on the phone's local date. The phrase changes at midnight.
 - Phrases rotate in a fixed shuffled order, so the cycle repeats every N days, where N is the number of phrases.
 - Tap ‹ › or swipe the card to see other days. **Copy** puts the phrase on the clipboard.
-- The gear in the top corner switches between two layouts: **Classic** (the red tear-off calendar) and **Treasure chest**, styled on the Team Treasure Chest board in `team-treasure-chest.jpg`. The treasure chest layout also shows one of the team's values or behaviours each day. The choice is remembered on that phone.
+- The gear in the top corner opens **Settings**, where **Layout** switches between **Classic** (the red tear-off calendar) and **Treasure chest**, styled on the Team Treasure Chest board in `team-treasure-chest.jpg`. The treasure chest layout also shows one of the team's values or behaviours each day. The choice is remembered on that phone.
 
 ## Adding or editing phrases
 

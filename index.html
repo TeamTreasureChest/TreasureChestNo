@@ -121,13 +121,41 @@
   }
   .icon-btn svg { width: 20px; height: 20px; }
 
+  /* Settings: a sheet over the page, like the iPhone app's. */
   .settings {
+    width: min(440px, calc(100% - 32px));
+    margin: auto;
     background: var(--paper);
+    color: var(--ink);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: var(--shadow);
   }
+  .settings::backdrop { background: rgba(10, 14, 20, .45); }
+  .settings-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 12px 12px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .settings h2 { margin: 0; font-size: 18px; font-weight: 800; }
+  .settings .done {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--stop);
+  }
+  .settings-body { padding: 18px; }
   .settings fieldset { border: 0; margin: 0; padding: 0; }
+  .settings .note {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
   .settings legend {
     font-family: var(--mono);
     font-size: 11px;
@@ -530,7 +558,11 @@
   [data-layout="treasure"] .all li { font-size: 17px; }
   [data-layout="treasure"] .all li.current { color: var(--stop); font-weight: 700; }
   [data-layout="treasure"] .all .t { font-family: var(--hand); font-size: 13px; }
-  [data-layout="treasure"] .settings { color: var(--card-ink); }
+  [data-layout="treasure"] .settings { color: var(--card-ink); background: #F8EBCB; border-color: #D2B77F; }
+  [data-layout="treasure"] .settings-head { border-color: #D2B77F; }
+  [data-layout="treasure"] .settings h2 { font-family: var(--marker); font-weight: 400; color: #6A3F1D; }
+  [data-layout="treasure"] .settings .done { color: #6A3F1D; background: #F8EBCB; border-color: #D2B77F; font-weight: 700; }
+  [data-layout="treasure"] .settings .note { color: var(--card-muted); font-size: 14px; }
   [data-layout="treasure"] .settings legend { color: var(--card-muted); font-family: var(--hand); font-size: 14px; }
   [data-layout="treasure"] .segmented label { border-color: #D2B77F; }
   [data-layout="treasure"] .segmented label:has(input:checked) {
@@ -561,21 +593,11 @@
     <div class="brand"><img class="logo" src="icons/icon-192.png" alt="" width="30" height="30"><span>TreasureChestNo</span></div>
     <div class="head-right">
       <div class="streak" id="count"></div>
-      <button class="icon-btn" id="settings-btn" type="button" aria-label="Settings" aria-expanded="false" aria-controls="settings">
+      <button class="icon-btn" id="settings-btn" type="button" aria-label="Settings" aria-haspopup="dialog">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       </button>
     </div>
   </header>
-
-  <section class="settings" id="settings" hidden>
-    <fieldset>
-      <legend>Layout</legend>
-      <div class="segmented">
-        <label><input type="radio" name="layout" value="classic">Classic</label>
-        <label><input type="radio" name="layout" value="treasure">Treasure chest</label>
-      </div>
-    </fieldset>
-  </section>
 
   <article class="page" aria-live="polite">
     <div class="page-top"><span id="month"></span><span id="year"></span></div>
@@ -613,6 +635,23 @@
   <div class="banner">Five people · One team · Endless potential</div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+
+<dialog class="settings" id="settings" aria-labelledby="settings-title">
+  <div class="settings-head">
+    <h2 id="settings-title">Settings</h2>
+    <button class="done" id="settings-done" type="button">Done</button>
+  </div>
+  <div class="settings-body">
+    <fieldset>
+      <legend>Layout</legend>
+      <div class="segmented">
+        <label><input type="radio" name="layout" value="classic">Classic</label>
+        <label><input type="radio" name="layout" value="treasure">Treasure chest</label>
+      </div>
+    </fieldset>
+    <p class="note">Treasure chest uses the look of the Team Treasure Chest board, and shows one of the team's values or behaviours each day.</p>
+  </div>
+</dialog>
 
 <script>
   const NOS = [
@@ -742,11 +781,11 @@
     });
   }
 
-  el("settings-btn").addEventListener("click", () => {
-    const panel = el("settings");
-    panel.hidden = !panel.hidden;
-    el("settings-btn").setAttribute("aria-expanded", String(!panel.hidden));
-  });
+  const settings = el("settings");
+  el("settings-btn").addEventListener("click", () => settings.showModal());
+  el("settings-done").addEventListener("click", () => settings.close());
+  // Tapping the dimmed page behind the sheet closes it too.
+  settings.addEventListener("click", e => { if (e.target === settings) settings.close(); });
   document.querySelectorAll('input[name="layout"]').forEach(r => r.addEventListener("change", () => {
     applyLayout(r.value);
     try { localStorage.setItem("layout", r.value); } catch (e) {}
