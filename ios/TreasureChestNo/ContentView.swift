@@ -2,8 +2,8 @@ import SwiftUI
 import UIKit
 
 struct ContentView: View {
-    @AppStorage(SettingsKey.includeSwearing) private var includeSwearing = false
-    @AppStorage(SettingsKey.layout) private var layout = PageLayout.classic
+    @AppStorage(SettingsKey.includeSwearing, store: SharedDefaults.store) private var includeSwearing = false
+    @AppStorage(SettingsKey.layout, store: SharedDefaults.store) private var layout = PageLayout.classic
     @Environment(\.scenePhase) private var scenePhase
 
     @State private var today = Date()
@@ -33,12 +33,17 @@ struct ContentView: View {
 
                     controls
 
-                    if offset != 0 {
-                        Button("Back to today") { move(to: 0) }
-                            .font(layout.labelFont(.footnote).weight(.medium))
-                            .textCase(.uppercase)
-                            .tint(palette.accent)
+                    HStack(spacing: 24) {
+                        ShareLink(item: phrase.text) {
+                            Label(offset == 0 ? "Share today's no" : "Share this no", systemImage: "square.and.arrow.up")
+                        }
+                        if offset != 0 {
+                            Button("Back to today") { move(to: 0) }
+                        }
                     }
+                    .font(layout.labelFont(.footnote).weight(.medium))
+                    .textCase(.uppercase)
+                    .tint(palette.accent)
 
                     PhraseList(phrases: rotation, current: phrase, layout: layout)
 
@@ -92,6 +97,10 @@ struct ContentView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
             today = Date()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .copiedFromNotification)) { _ in
+            offset = 0
+            showCopied()
         }
     }
 
@@ -159,6 +168,10 @@ struct ContentView: View {
 
     private func copy() {
         UIPasteboard.general.string = phrase.text
+        showCopied()
+    }
+
+    private func showCopied() {
         copied = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.6) { copied = false }
     }

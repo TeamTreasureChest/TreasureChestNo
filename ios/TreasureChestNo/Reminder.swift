@@ -1,15 +1,6 @@
 import Foundation
 import UserNotifications
 
-/// Keys for the values the Settings screen saves.
-enum SettingsKey {
-    static let reminderEnabled = "reminderEnabled"
-    /// Reminder time as minutes after midnight.
-    static let reminderMinutes = "reminderMinutes"
-    static let includeSwearing = "includeSwearing"
-    static let layout = "layout"
-}
-
 /// The daily "today's no" notification.
 ///
 /// The phrase changes every day, so a single repeating notification can't
@@ -20,6 +11,26 @@ enum SettingsKey {
 enum Reminder {
     static let defaultMinutes = 8 * 60
     static let daysAhead = 60
+
+    static let category = "DAILY_NO"
+    static let copyAction = "COPY"
+    /// The key in each notification's userInfo that holds the phrase.
+    static let textKey = "text"
+
+    /// Adds a Copy button to the daily notification (long-press it to see
+    /// it). iOS only lets apps use the clipboard in the foreground, so the
+    /// button opens the app to copy.
+    static func registerActions() {
+        let copy = UNNotificationAction(
+            identifier: copyAction,
+            title: "Copy",
+            options: [.foreground],
+            icon: UNNotificationActionIcon(systemImageName: "doc.on.doc")
+        )
+        UNUserNotificationCenter.current().setNotificationCategories([
+            UNNotificationCategory(identifier: category, actions: [copy], intentIdentifiers: [], options: [])
+        ])
+    }
 
     /// Asks for permission to send notifications. Returns false if the user
     /// says no, or said no before.
@@ -36,7 +47,7 @@ enum Reminder {
     }
 
     /// Rebuilds the schedule from the saved settings.
-    static func reschedule(defaults: UserDefaults = .standard) async {
+    static func reschedule(defaults: UserDefaults = SharedDefaults.store) async {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
 
@@ -57,8 +68,11 @@ enum Reminder {
 
             let content = UNMutableNotificationContent()
             content.title = "Today's no"
-            content.body = Phrases.phrase(for: day, includeSwearing: includeSwearing).text
+            let text = Phrases.phrase(for: day, includeSwearing: includeSwearing).text
+            content.body = text
             content.sound = .default
+            content.categoryIdentifier = category
+            content.userInfo = [textKey: text]
 
             let when = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: fireDate)
             let request = UNNotificationRequest(
