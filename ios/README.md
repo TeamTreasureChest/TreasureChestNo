@@ -6,6 +6,7 @@ The native iOS version of TreasureChestNo. It has the same 30 ways to say no as 
 
 - **Today's no** on a tear-off calendar page, with its tone tag and a tip. Tap ‹ › or swipe the page to see other days, and tap **Copy** to put the phrase on the clipboard.
 - **Settings** (the gear, top right):
+  - **Layout:** **Classic** (the red tear-off calendar) or **Treasure chest**, styled on the Team Treasure Chest board in `team-treasure-chest.jpg`, with sand, parchment, wood and gold. The treasure chest layout also shows one of the team's values or behaviours each day. The web app has the same setting.
   - **Daily notification:** off to start with. Turn it on and pick a time, and you'll get a notification each day at that time with that day's no. The first time it's turned on, iOS asks for permission.
   - **Include swear words:** off to start with. While it's off, phrases with swearing are left out of the daily rotation, the full list and the notifications.
 
@@ -42,6 +43,7 @@ Make the same change in the web app's `index.html` so the two stay in step.
 | `Reminder.swift` | Schedules the daily notifications |
 | `Phrases.swift` | The phrases and the day-to-phrase logic |
 | `Theme.swift` | Colours for light and dark mode |
-| `Assets.xcassets` | App icon (the treasure chest from `team-treasure-chest.jpg`) and accent colour |
+| `PageLayout.swift` | The Classic and Treasure chest layouts: colours, fonts, buttons, and the team's values and behaviours |
+| `Assets.xcassets` | App icon (the treasure chest from `team-treasure-chest.jpg`), the same chest for the title bar, and accent colour |
 
 A GitHub Actions check (`.github/workflows/ios.yml`) builds the app on a Mac for every pull request that changes the `ios/` folder.

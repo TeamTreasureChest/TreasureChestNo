@@ -7,6 +7,7 @@ enum SettingsKey {
     /// Reminder time as minutes after midnight.
     static let reminderMinutes = "reminderMinutes"
     static let includeSwearing = "includeSwearing"
+    static let layout = "layout"
 }
 
 /// The daily "today's no" notification.
