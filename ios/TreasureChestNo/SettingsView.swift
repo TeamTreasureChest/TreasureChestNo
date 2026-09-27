@@ -1,11 +1,12 @@
 import SwiftUI
 import UIKit
+import WidgetKit
 
 struct SettingsView: View {
-    @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = false
-    @AppStorage(SettingsKey.reminderMinutes) private var reminderMinutes = Reminder.defaultMinutes
-    @AppStorage(SettingsKey.includeSwearing) private var includeSwearing = false
-    @AppStorage(SettingsKey.layout) private var layout = PageLayout.classic
+    @AppStorage(SettingsKey.reminderEnabled, store: SharedDefaults.store) private var reminderEnabled = false
+    @AppStorage(SettingsKey.reminderMinutes, store: SharedDefaults.store) private var reminderMinutes = Reminder.defaultMinutes
+    @AppStorage(SettingsKey.includeSwearing, store: SharedDefaults.store) private var includeSwearing = false
+    @AppStorage(SettingsKey.layout, store: SharedDefaults.store) private var layout = PageLayout.classic
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -75,6 +76,10 @@ struct SettingsView: View {
             }
             .onChange(of: includeSwearing) { _, _ in
                 Task { await Reminder.reschedule() }
+                WidgetCenter.shared.reloadAllTimelines()
+            }
+            .onChange(of: layout) { _, _ in
+                WidgetCenter.shared.reloadAllTimelines()
             }
         }
     }
