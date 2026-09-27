@@ -16,7 +16,10 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&family=Permanent+Marker&display=swap">
+<script>
+  try { if (localStorage.getItem("layout") === "treasure") document.documentElement.dataset.layout = "treasure"; } catch (e) {}
+</script>
 <style>
   :root {
     --ground: #EEF1F4;
@@ -87,25 +90,117 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     font-weight: 800;
-    font-size: 20px;
+    font-size: clamp(17px, 5vw, 20px);
+    white-space: nowrap;
     letter-spacing: -0.01em;
     min-width: 0;
   }
-  .octagon {
-    width: 26px; height: 26px;
-    background: var(--stop);
-    clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
-    display: grid; place-items: center;
-    color: #fff; font-size: 9px; font-weight: 800; letter-spacing: .04em;
+  .brand span { overflow: hidden; text-overflow: ellipsis; }
+  .logo {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    flex: none;
+    object-fit: cover;
   }
+  .head-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 38px;
+    min-height: 38px;
+    height: 38px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    color: var(--muted);
+  }
+  .icon-btn svg { width: 20px; height: 20px; }
+
+  /* Settings: a sheet over the page, like the iPhone app's. */
+  .settings {
+    width: min(440px, calc(100% - 32px));
+    margin: auto;
+    background: var(--paper);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: var(--shadow);
+  }
+  .settings::backdrop { background: rgba(10, 14, 20, .45); }
+  .settings-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 12px 12px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .settings h2 { margin: 0; font-size: 18px; font-weight: 800; }
+  .settings .done {
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--stop);
+  }
+  .settings-body { padding: 18px; }
+  .settings fieldset { border: 0; margin: 0; padding: 0; }
+  .settings .note {
+    margin: 10px 0 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+  }
+  .settings legend {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    padding: 0;
+    margin-bottom: 10px;
+  }
+  .segmented {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .segmented label {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .segmented input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .segmented label:has(input:checked) {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .segmented label:has(input:focus-visible) { outline: 3px solid var(--stop); outline-offset: 2px; }
   .streak {
     font-family: var(--mono);
     font-size: 12px;
     color: var(--muted);
     letter-spacing: .04em;
     text-transform: uppercase;
+    white-space: nowrap;
   }
 
   /* Tear-off calendar page */
@@ -310,13 +405,198 @@
   @media (prefers-reduced-motion: reduce) {
     .phrase, .toast { transition: none; }
   }
+
+  /* Treasure chest layout, themed on the Team Treasure Chest board
+     (team-treasure-chest.jpg): sand, parchment, wood and gold. */
+  .value, .banner { display: none; }
+  :root[data-layout="treasure"] {
+    color-scheme: light;
+    --ground: #EEDCB3;
+    --paper: #F8EBCB;
+    --ink: #1B3A5C;
+    --muted: #6B5A3E;
+    --line: #D2B77F;
+    --stop: #1E7A8C;
+    --stop-soft: #F2C24B;
+    --card-ink: #1B3A5C;
+    --card-muted: #6B5A3E;
+    --wood: #6A3F1D;
+    --wood-dark: #4A2A12;
+    --gold: #F2C24B;
+    --gold-dark: #C8901E;
+    --shadow: 0 1px 0 rgba(74,42,18,.08), 0 14px 30px -12px rgba(74,42,18,.45);
+    --hand: "Kalam", "Chalkboard SE", "Comic Sans MS", cursive;
+    --marker: "Permanent Marker", "Chalkboard SE", "Marker Felt", cursive;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root[data-layout="treasure"]:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0E2230;
+      --paper: #EEDDB4;
+      --ink: #F3E6C6;
+      --muted: #B8A57E;
+      --line: #2C4556;
+      --stop: #F2C24B;
+      --shadow: 0 1px 0 rgba(0,0,0,.3), 0 16px 34px -12px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-layout="treasure"][data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0E2230;
+    --paper: #EEDDB4;
+    --ink: #F3E6C6;
+    --muted: #B8A57E;
+    --line: #2C4556;
+    --stop: #F2C24B;
+    --shadow: 0 1px 0 rgba(0,0,0,.3), 0 16px 34px -12px rgba(0,0,0,.7);
+  }
+  [data-layout="treasure"] body {
+    font-family: var(--hand);
+    background:
+      radial-gradient(rgba(106,63,29,.09) 1px, transparent 1.5px) 0 0 / 7px 7px,
+      var(--ground);
+  }
+  [data-layout="treasure"] .brand {
+    font-family: var(--marker);
+    font-weight: 400;
+    font-size: clamp(18px, 5.2vw, 21px);
+    letter-spacing: .01em;
+  }
+  [data-layout="treasure"] .logo {
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px var(--gold), 0 2px 6px rgba(74,42,18,.35);
+  }
+  [data-layout="treasure"] .streak { font-family: var(--hand); font-size: 14px; text-transform: none; letter-spacing: 0; }
+
+  /* The page becomes a parchment scroll under a wooden plank. */
+  [data-layout="treasure"] .page {
+    color: var(--card-ink);
+    border-radius: 4px 4px 14px 14px;
+    background:
+      radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(160,110,40,.22) 100%),
+      var(--paper);
+    border: 1px solid rgba(160,110,40,.35);
+  }
+  [data-layout="treasure"] .page-top {
+    font-family: var(--marker);
+    font-size: 15px;
+    letter-spacing: .06em;
+    padding: 12px 20px;
+    color: var(--gold);
+    background:
+      radial-gradient(circle at 10px 50%, var(--gold) 2.5px, transparent 3px),
+      radial-gradient(circle at calc(100% - 10px) 50%, var(--gold) 2.5px, transparent 3px),
+      repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 7px, rgba(0,0,0,.12) 7px 8px),
+      linear-gradient(180deg, var(--wood), var(--wood-dark));
+    text-shadow: 0 1px 0 rgba(0,0,0,.4);
+  }
+  [data-layout="treasure"] .perf { display: none; }
+  [data-layout="treasure"] .page-body { padding-top: 16px; }
+  [data-layout="treasure"] .daynum { font-family: var(--marker); font-weight: 400; letter-spacing: 0; color: var(--wood); }
+  [data-layout="treasure"] .weekday,
+  [data-layout="treasure"] .kicker,
+  [data-layout="treasure"] .use { color: var(--card-muted); }
+  [data-layout="treasure"] .weekday,
+  [data-layout="treasure"] .kicker { font-family: var(--hand); font-size: 14px; letter-spacing: .04em; }
+  [data-layout="treasure"] .rule {
+    height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, transparent, #2BA3B8 12%, #2BA3B8 88%, transparent);
+    opacity: .7;
+  }
+  [data-layout="treasure"] .phrase {
+    font-family: var(--hand);
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.15;
+  }
+  [data-layout="treasure"] .tone {
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--wood-dark);
+    background: radial-gradient(circle at 35% 30%, #FBE08A, var(--gold) 60%);
+    border: 1px solid var(--gold-dark);
+    box-shadow: 0 1px 0 var(--gold-dark);
+  }
+  [data-layout="treasure"] .use { font-size: 16px; }
+  [data-layout="treasure"] .value {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 2px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(160,110,40,.5);
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  [data-layout="treasure"] .value-icon { font-size: 26px; line-height: 1; }
+  [data-layout="treasure"] .value-kind { font-size: 13px; color: var(--card-muted); }
+
+  /* Wooden buttons, and a gold coin for the main one. */
+  [data-layout="treasure"] button {
+    font-family: var(--hand);
+  }
+  [data-layout="treasure"] .arrow,
+  [data-layout="treasure"] .icon-btn {
+    color: var(--gold);
+    border-color: var(--wood-dark);
+    background:
+      repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 9px, rgba(0,0,0,.1) 9px 10px),
+      linear-gradient(180deg, var(--wood), var(--wood-dark));
+  }
+  [data-layout="treasure"] .primary {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--wood-dark);
+    border: 1px solid var(--gold-dark);
+    background: linear-gradient(180deg, #FBE08A, var(--gold) 55%, #E0A526);
+    box-shadow: inset 0 -2px 0 rgba(200,144,30,.6);
+  }
+  [data-layout="treasure"] .today-link { font-family: var(--hand); font-size: 15px; font-weight: 700; }
+  [data-layout="treasure"] summary { font-family: var(--hand); font-size: 15px; letter-spacing: .02em; }
+  [data-layout="treasure"] .all li { font-size: 17px; }
+  [data-layout="treasure"] .all li.current { color: var(--stop); font-weight: 700; }
+  [data-layout="treasure"] .all .t { font-family: var(--hand); font-size: 13px; }
+  [data-layout="treasure"] .settings { color: var(--card-ink); background: #F8EBCB; border-color: #D2B77F; }
+  [data-layout="treasure"] .settings-head { border-color: #D2B77F; }
+  [data-layout="treasure"] .settings h2 { font-family: var(--marker); font-weight: 400; color: #6A3F1D; }
+  [data-layout="treasure"] .settings .done { color: #6A3F1D; background: #F8EBCB; border-color: #D2B77F; font-weight: 700; }
+  [data-layout="treasure"] .settings .note { color: var(--card-muted); font-size: 14px; }
+  [data-layout="treasure"] .settings legend { color: var(--card-muted); font-family: var(--hand); font-size: 14px; }
+  [data-layout="treasure"] .segmented label { border-color: #D2B77F; }
+  [data-layout="treasure"] .segmented label:has(input:checked) {
+    background: linear-gradient(180deg, #FBE08A, var(--gold));
+    color: var(--wood-dark);
+    border-color: var(--gold-dark);
+  }
+  [data-layout="treasure"] .toast { background: var(--wood-dark); color: #F8EBCB; font-family: var(--hand); }
+  [data-layout="treasure"] .banner {
+    display: block;
+    text-align: center;
+    font-family: var(--hand);
+    font-weight: 700;
+    font-size: 15px;
+    color: #F8EBCB;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background:
+      repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 9px, rgba(0,0,0,.1) 9px 10px),
+      linear-gradient(180deg, var(--wood), var(--wood-dark));
+    box-shadow: var(--shadow);
+  }
 </style>
 </head>
 <body>
 <div class="app">
   <header>
-    <div class="brand"><span class="octagon" aria-hidden="true">NO</span>TreasureChestNo</div>
-    <div class="streak" id="count"></div>
+    <div class="brand"><img class="logo" src="icons/icon-192.png" alt="" width="30" height="30"><span>TreasureChestNo</span></div>
+    <div class="head-right">
+      <div class="streak" id="count"></div>
+      <button class="icon-btn" id="settings-btn" type="button" aria-label="Settings" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
   </header>
 
   <article class="page" aria-live="polite">
@@ -334,6 +614,10 @@
         <span class="tone" id="tone"></span>
       </div>
       <p class="use" id="use"></p>
+      <div class="value">
+        <span class="value-icon" id="value-icon" aria-hidden="true"></span>
+        <div><div class="value-kind" id="value-kind"></div><div id="value-text"></div></div>
+      </div>
     </div>
   </article>
 
@@ -348,8 +632,26 @@
     <summary id="all-label">All the ways to say no</summary>
     <ul class="all" id="all"></ul>
   </details>
+  <div class="banner">Five people · One team · Endless potential</div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+
+<dialog class="settings" id="settings" aria-labelledby="settings-title">
+  <div class="settings-head">
+    <h2 id="settings-title">Settings</h2>
+    <button class="done" id="settings-done" type="button">Done</button>
+  </div>
+  <div class="settings-body">
+    <fieldset>
+      <legend>Layout</legend>
+      <div class="segmented">
+        <label><input type="radio" name="layout" value="classic">Classic</label>
+        <label><input type="radio" name="layout" value="treasure">Treasure chest</label>
+      </div>
+    </fieldset>
+    <p class="note">Treasure chest uses the look of the Team Treasure Chest board, and shows one of the team's values or behaviours each day.</p>
+  </div>
+</dialog>
 
 <script>
   const NOS = [
@@ -390,6 +692,25 @@
   const ORDER = [13,  22,  29,  16,  4,  14,  27,  11,  19,  3,  12,  21,  26,  24,  20,  9,  7,  25,  10,  28,  6,  8,  2,  23,  0,  15,  5,  18,  17,  1];
   const DAY_MS = 86400000;
 
+  // The team's values and behaviours from the Team Treasure Chest board.
+  // The treasure chest layout shows one a day alongside the no.
+  const TREASURE = [
+    { icon: "☀️", kind: "Value", text: "Feel joy" },
+    { icon: "💬", kind: "Behaviour", text: "Give and take feedback with positive intent" },
+    { icon: "⛰️", kind: "Value", text: "Be open to challenge" },
+    { icon: "💚", kind: "Behaviour", text: "Accept change in the status quo" },
+    { icon: "🔄", kind: "Value", text: "Embrace change" },
+    { icon: "🐢", kind: "Behaviour", text: "Unwind and slow down" },
+    { icon: "🌱", kind: "Value", text: "Sustain energy" },
+    { icon: "😄", kind: "Behaviour", text: "Be silly. Belly laugh." },
+    { icon: "🛡️", kind: "Value", text: "Accountability" },
+    { icon: "📅", kind: "Behaviour", text: "Scheduled accountability check-ins" }
+  ];
+  const THEME_COLORS = {
+    classic: { light: "#EEF1F4", dark: "#0E1318" },
+    treasure: { light: "#EEDCB3", dark: "#0E2230" }
+  };
+
   const el = id => document.getElementById(id);
   const todayKey = () => {
     const d = new Date();
@@ -411,7 +732,12 @@
     el("weekday").innerHTML = date.toLocaleDateString(undefined, { ...opts, weekday: "long" }) +
       "<br>" + (offset === 0 ? "Today" : offset === -1 ? "Yesterday" : offset === 1 ? "Tomorrow" :
         (offset < 0 ? -offset + " days ago" : "In " + offset + " days"));
-    el("kicker").textContent = offset === 0 ? "Today's no" : offset < 0 ? "That day's no" : "Coming up";
+    const treasure = layout() === "treasure";
+    el("kicker").textContent = offset === 0 ? (treasure ? "X marks today's no" : "Today's no") : offset < 0 ? "That day's no" : "Coming up";
+    const gem = TREASURE[((key % TREASURE.length) + TREASURE.length) % TREASURE.length];
+    el("value-icon").textContent = gem.icon;
+    el("value-kind").textContent = (offset === 0 ? "Today's team " : "Team ") + gem.kind.toLowerCase();
+    el("value-text").textContent = gem.text;
     el("copy").textContent = offset === 0 ? "Copy today's no" : "Copy this no";
     el("today").hidden = offset === 0;
     el("count").textContent = "No. " + (NOS.indexOf(no) + 1) + " of " + NOS.length;
@@ -442,6 +768,29 @@
       list.append(li);
     });
   }
+
+  const layout = () => document.documentElement.dataset.layout === "treasure" ? "treasure" : "classic";
+
+  function applyLayout(name) {
+    if (name === "treasure") document.documentElement.dataset.layout = "treasure";
+    else delete document.documentElement.dataset.layout;
+    document.querySelectorAll('input[name="layout"]').forEach(r => { r.checked = r.value === name; });
+    const colors = THEME_COLORS[name];
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => {
+      m.content = m.media.includes("dark") ? colors.dark : colors.light;
+    });
+  }
+
+  const settings = el("settings");
+  el("settings-btn").addEventListener("click", () => settings.showModal());
+  el("settings-done").addEventListener("click", () => settings.close());
+  // Tapping the dimmed page behind the sheet closes it too.
+  settings.addEventListener("click", e => { if (e.target === settings) settings.close(); });
+  document.querySelectorAll('input[name="layout"]').forEach(r => r.addEventListener("change", () => {
+    applyLayout(r.value);
+    try { localStorage.setItem("layout", r.value); } catch (e) {}
+    render(false);
+  }));
 
   let toastTimer;
   function toast(msg) {
@@ -486,6 +835,7 @@
     if (!document.hidden) render(false);
   });
 
+  applyLayout(layout());
   render(false);
 
   if ("serviceWorker" in navigator) {

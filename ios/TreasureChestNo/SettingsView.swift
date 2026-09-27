@@ -5,6 +5,7 @@ struct SettingsView: View {
     @AppStorage(SettingsKey.reminderEnabled) private var reminderEnabled = false
     @AppStorage(SettingsKey.reminderMinutes) private var reminderMinutes = Reminder.defaultMinutes
     @AppStorage(SettingsKey.includeSwearing) private var includeSwearing = false
+    @AppStorage(SettingsKey.layout) private var layout = PageLayout.classic
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -13,6 +14,19 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Picker("Layout", selection: $layout) {
+                        ForEach(PageLayout.allCases) { option in
+                            Text(option.title).tag(option)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Layout")
+                } footer: {
+                    Text("Treasure chest uses the look of the Team Treasure Chest board, and shows one of the team's values or behaviours each day.")
+                }
+
                 Section {
                     Toggle("Daily notification", isOn: $reminderEnabled)
                     if reminderEnabled {
