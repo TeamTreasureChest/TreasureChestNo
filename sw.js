@@ -2,12 +2,12 @@
 // Pages and app files: try the network first so new phrases show up
 // straight away, fall back to the cached copy when offline.
 // Google Fonts: cache on first use, then serve from cache.
-const CACHE = "treasure-chest-no-v1";
+const CACHE = "treasure-chest-no-v2";
 const SHELL = [
   "./",
   "index.html",
   "manifest.webmanifest",
-  "icons/icon.svg",
+  "icons/favicon-32.png",
   "icons/apple-touch-icon.png",
   "icons/icon-192.png",
   "icons/icon-512.png"

@@ -33,7 +33,7 @@ There's also a native iOS version in the [`ios/`](ios/) folder, with a daily not
 | `index.html` | The whole app: page, styles, phrases and script |
 | `manifest.webmanifest` | App name, colours and icons for installing it |
 | `sw.js` | Offline support |
-| `icons/` | App icon (`icon.svg` is the source, the PNGs are rendered from it) |
+| `icons/` | App icon, the same treasure chest as the iPhone app. The PNGs are resized from `ios/TreasureChestNo/Assets.xcassets/AppIcon.appiconset/AppIcon.png` |
 | `.github/workflows/pages.yml` | Publishes the app to GitHub Pages on every push to `main` |
 
 ## Running it locally

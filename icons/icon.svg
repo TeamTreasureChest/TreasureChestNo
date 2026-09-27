@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" fill="#C8102E"/>
-  <polygon points="187,76 325,76 436,187 436,325 325,436 187,436 76,325 76,187" fill="none" stroke="#FFFFFF" stroke-width="22" stroke-linejoin="round"/>
-  <text x="256" y="300" text-anchor="middle" font-family="'Helvetica Neue', 'FreeSans', 'DejaVu Sans', Arial, sans-serif" font-weight="700" font-size="150" fill="#FFFFFF" letter-spacing="4">NO</text>
-</svg>
