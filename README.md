@@ -1,5 +1,4 @@
 # TreasureChestNo
-An app to help Sarah
 
 **TreasureChestNo** gives you a new way to say no each day. It's a small web app built to be added to an iPhone home screen, where it opens full-screen like a regular app and works offline.
 
