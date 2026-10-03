@@ -71,11 +71,6 @@ struct ContentView: View {
                 ToolbarItem(placement: .principal) {
                     title
                 }
-                ToolbarItem(placement: .topBarLeading) {
-                    Text("No. \(position) of \(rotation.count)")
-                        .font(layout.labelFont(.caption))
-                        .foregroundStyle(palette.muted)
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showingSettings = true } label: {
                         Image(systemName: "gearshape")
@@ -102,10 +97,6 @@ struct ContentView: View {
             offset = 0
             showCopied()
         }
-    }
-
-    private var position: Int {
-        (Phrases.all.firstIndex(of: phrase) ?? 0) + 1
     }
 
     /// The app name with the treasure chest icon, in the navigation bar.
