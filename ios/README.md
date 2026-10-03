@@ -1,11 +1,12 @@
-# TreasureChestNo for iPhone
+# TreasureChestNo for iPhone and iPad
 
 The native iOS version of TreasureChestNo. It has the same 30 ways to say no as the web app in the repo root, in the same daily order. With **Include swear words** turned on, both show the same no on the same day. With it off (the default), the rotation skips the phrase with swearing, so the two apps can show different phrases.
 
 ## What it does
 
 - **Today's no** on a tear-off calendar page, with its tone tag and a tip. Tap ‹ › or swipe the page to see other days, tap **Copy** to put the phrase on the clipboard, or **Share** to send it to Messages, WhatsApp and so on.
-- **Widgets:** long-press the home screen, tap **Edit → Add Widget** and pick **TreasureChestNo**. Small and medium sizes go on the home screen (and show in StandBy while charging). On the Lock Screen, tap **Customise → Lock Screen** and add the one-line or three-line version. Widgets follow the **Layout** and **Include swear words** settings and change at midnight.
+- **iPad:** the calendar page is drawn bigger, the app turns with the iPad, and in landscape the full list of phrases sits beside the page. It works in Split View and Slide Over too.
+- **Widgets:** long-press the home screen, tap **Edit → Add Widget** and pick **TreasureChestNo**. Small, medium and large sizes go on the home screen (plus extra large on iPad), and small shows in StandBy while charging. On the Lock Screen, tap **Customise → Lock Screen** and add the one-line or three-line version. Widgets follow the **Layout** and **Include swear words** settings and change at midnight.
 - **Siri and Shortcuts:** say "What's today's no in TreasureChestNo". Siri reads it out. The **Today's No** action is also in the Shortcuts app, and gives the phrase as text to use in other steps.
 - **Settings** (the gear, top right):
   - **Layout:** **Classic** (the red tear-off calendar) or **Treasure chest**, styled on the Team Treasure Chest board in `team-treasure-chest.jpg`, with sand, parchment, wood and gold. The treasure chest layout also shows one of the team's values or behaviours each day. The web app has the same setting.

@@ -8,8 +8,8 @@ struct TreasureChestNoWidgets: WidgetBundle {
     }
 }
 
-/// Today's no on the home screen (small and medium), in StandBy, and on the
-/// Lock Screen (one line or a few lines). Follows the app's Layout and
+/// Today's no on the home screen (small, medium and large, plus extra large
+/// on iPad), in StandBy, and on the Lock Screen (one line or a few lines). Follows the app's Layout and
 /// swear words settings, which it reads from the App Group.
 struct TodaysNoWidget: Widget {
     let kind = "TodaysNo"
@@ -20,7 +20,10 @@ struct TodaysNoWidget: Widget {
         }
         .configurationDisplayName("Today's No")
         .description("Today's way to say no. Changes at midnight.")
-        .supportedFamilies([.systemSmall, .systemMedium, .accessoryRectangular, .accessoryInline])
+        .supportedFamilies([
+            .systemSmall, .systemMedium, .systemLarge, .systemExtraLarge,
+            .accessoryRectangular, .accessoryInline
+        ])
     }
 }
 
@@ -78,6 +81,8 @@ struct NoWidgetView: View {
             LockScreenView(phrase: entry.phrase)
         case .systemMedium:
             MediumView(entry: entry)
+        case .systemLarge, .systemExtraLarge:
+            LargeView(entry: entry)
         default:
             SmallView(entry: entry)
         }
@@ -145,7 +150,7 @@ private struct SmallView: View {
             }
 
             Text(entry.phrase.text)
-                .font(layout.phraseFont(size: phraseSize(for: entry.phrase, small: true)))
+                .font(layout.phraseFont(size: phraseSize(for: entry.phrase, sizes: (26, 21, 17, 14))))
                 .foregroundStyle(palette.cardInk)
                 .minimumScaleFactor(0.5)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -197,7 +202,7 @@ private struct MediumView: View {
 
             VStack(alignment: .leading, spacing: 6) {
                 Text(entry.phrase.text)
-                    .font(layout.phraseFont(size: phraseSize(for: entry.phrase, small: false)))
+                    .font(layout.phraseFont(size: phraseSize(for: entry.phrase, sizes: (30, 25, 21, 17))))
                     .foregroundStyle(palette.cardInk)
                     .minimumScaleFactor(0.5)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -221,6 +226,78 @@ private struct MediumView: View {
     }
 }
 
+/// A small calendar page: month and weekday, the date, the phrase, its tone
+/// and tip. The treasure chest layout adds the team value of the day.
+private struct LargeView: View {
+    let entry: NoEntry
+
+    private var layout: PageLayout { entry.layout }
+    private var palette: Palette { layout.palette }
+    private var treasure: Bool { layout == .treasure }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(entry.date, format: .dateTime.month(.wide))
+                    .foregroundStyle(treasure ? palette.dayNumber : Theme.stop)
+                Spacer()
+                Text(entry.date, format: .dateTime.weekday(.wide))
+                    .foregroundStyle(palette.cardMuted)
+            }
+            .font(layout.labelFont(.caption))
+            .textCase(.uppercase)
+
+            HStack(alignment: .bottom) {
+                Text(entry.date, format: .dateTime.day())
+                    .font(treasure ? TreasureTheme.marker(size: 56) : .system(size: 56, weight: .heavy))
+                    .monospacedDigit()
+                    .foregroundStyle(palette.dayNumber)
+                Spacer()
+                if treasure {
+                    Image("Chest")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 44, height: 44)
+                        .clipShape(Circle())
+                        .overlay(Circle().strokeBorder(TreasureTheme.gold, lineWidth: 2))
+                }
+            }
+
+            if treasure {
+                Capsule().fill(TreasureTheme.sea.opacity(0.7)).frame(height: 3)
+            } else {
+                Rectangle().fill(Theme.line).frame(height: 1)
+            }
+
+            Text(treasure ? "X marks today's no" : "Today's no")
+                .font(layout.labelFont(.caption2))
+                .textCase(.uppercase)
+                .foregroundStyle(palette.cardMuted)
+
+            Text(entry.phrase.text)
+                .font(layout.phraseFont(size: phraseSize(for: entry.phrase, sizes: (40, 34, 28, 22))))
+                .foregroundStyle(palette.cardInk)
+                .minimumScaleFactor(0.5)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            ToneTag(tone: entry.phrase.tone, layout: layout)
+
+            Text(entry.phrase.tip)
+                .font(treasure ? TreasureTheme.hand(size: 14, relativeTo: .footnote) : .footnote)
+                .foregroundStyle(palette.cardMuted)
+                .lineLimit(2)
+
+            if treasure {
+                Text("\(entry.value.icon) \(entry.value.text)")
+                    .font(TreasureTheme.hand(size: 14, relativeTo: .footnote))
+                    .foregroundStyle(palette.cardInk)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+        }
+    }
+}
+
 private struct ToneTag: View {
     let tone: String
     let layout: PageLayout
@@ -238,13 +315,14 @@ private struct ToneTag: View {
     }
 }
 
-/// Starting size for the phrase by length. `minimumScaleFactor` shrinks
-/// it further if it still doesn't fit.
-private func phraseSize(for phrase: Phrase, small: Bool) -> CGFloat {
+/// Starting size for the phrase by length: under 16 characters, under 30,
+/// under 50, and longer. `minimumScaleFactor` shrinks it further if it
+/// still doesn't fit.
+private func phraseSize(for phrase: Phrase, sizes: (CGFloat, CGFloat, CGFloat, CGFloat)) -> CGFloat {
     switch phrase.text.count {
-    case ..<16: return small ? 26 : 30
-    case ..<30: return small ? 21 : 25
-    case ..<50: return small ? 17 : 21
-    default: return small ? 14 : 17
+    case ..<16: return sizes.0
+    case ..<30: return sizes.1
+    case ..<50: return sizes.2
+    default: return sizes.3
     }
 }

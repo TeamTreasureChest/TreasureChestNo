@@ -276,7 +276,7 @@
     flex: 1;
     display: flex;
     align-items: center;
-    font-size: var(--phrase-size, 44px);
+    font-size: calc(var(--phrase-size, 44px) * var(--scale, 1));
     transition: opacity .25s ease, transform .25s ease;
     white-space: pre-line;
   }
@@ -585,6 +585,66 @@
       linear-gradient(180deg, var(--wood), var(--wood-dark));
     box-shadow: var(--shadow);
   }
+
+  .side { display: flex; flex-direction: column; gap: 18px; }
+
+  /* Tablets and other wide screens: a bigger page. */
+  @media (min-width: 700px) {
+    :root { --scale: 1.3; }
+    body { padding-inline: max(32px, env(safe-area-inset-left, 0px)) max(32px, env(safe-area-inset-right, 0px)); }
+    .app { max-width: 640px; gap: 22px; }
+    .brand { font-size: 24px; }
+    .logo { width: 36px; height: 36px; }
+    .streak { font-size: 14px; }
+    .page-top { font-size: 15px; padding: 16px 24px 13px; }
+    .page-body { padding: 14px 30px 32px; gap: 18px; min-height: 430px; }
+    .daynum { font-size: 84px; }
+    .weekday { font-size: 15px; }
+    .kicker { font-size: 13px; }
+    .tone { font-size: 14px; padding: 5px 12px; }
+    .use { font-size: 17px; }
+    .actions { grid-template-columns: 60px 1fr 60px; }
+    button { min-height: 60px; }
+    .primary { font-size: 19px; }
+    .today-link { font-size: 14px; }
+    summary { font-size: 13px; }
+    .all li { font-size: 17px; }
+    [data-layout="treasure"] .brand { font-size: 26px; }
+    [data-layout="treasure"] .page-top { font-size: 19px; padding: 15px 26px; }
+    [data-layout="treasure"] .weekday,
+    [data-layout="treasure"] .kicker { font-size: 17px; }
+    [data-layout="treasure"] .use { font-size: 19px; }
+    [data-layout="treasure"] .value { font-size: 19px; }
+    [data-layout="treasure"] .value-kind { font-size: 15px; }
+    [data-layout="treasure"] .primary { font-size: 22px; }
+    [data-layout="treasure"] summary { font-size: 17px; }
+    [data-layout="treasure"] .all li { font-size: 19px; }
+    [data-layout="treasure"] .banner { font-size: 17px; }
+  }
+
+  /* Landscape iPad and desktop: the full list sits beside the page. */
+  @media (min-width: 1000px) and (orientation: landscape) {
+    .app {
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: minmax(0, 600px) minmax(0, 1fr);
+      grid-template-areas:
+        "head    head"
+        "page    side"
+        "actions side"
+        "today   side";
+      grid-template-rows: auto auto auto 1fr;
+      column-gap: 40px;
+      row-gap: 22px;
+      align-items: start;
+    }
+    header { grid-area: head; }
+    .page { grid-area: page; }
+    .actions { grid-area: actions; }
+    .today-link { grid-area: today; }
+    .side { grid-area: side; }
+    .side details { border-top: 0; padding-top: 0; }
+  }
 </style>
 </head>
 <body>
@@ -628,11 +688,13 @@
   </div>
   <button class="today-link" id="today" type="button" hidden>Back to today</button>
 
-  <details>
-    <summary id="all-label">All the ways to say no</summary>
-    <ul class="all" id="all"></ul>
-  </details>
-  <div class="banner">Five people · One team · Endless potential</div>
+  <div class="side">
+    <details id="all-details">
+      <summary id="all-label">All the ways to say no</summary>
+      <ul class="all" id="all"></ul>
+    </details>
+    <div class="banner">Five people · One team · Endless potential</div>
+  </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -834,6 +896,12 @@
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden) render(false);
   });
+
+  // Keep the full list open while it has its own column.
+  const wide = matchMedia("(min-width: 1000px) and (orientation: landscape)");
+  const openListWhenWide = () => { if (wide.matches) el("all-details").open = true; };
+  wide.addEventListener("change", openListWhenWide);
+  openListWhenWide();
 
   applyLayout(layout());
   render(false);
