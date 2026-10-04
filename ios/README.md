@@ -36,6 +36,10 @@ The version and build number are set once for the whole project, and the app and
 
 Don't change them on a target's **General** tab. That saves a separate copy on that target, and the app and widgets fall out of step.
 
+## Encryption (export compliance)
+
+The app declares that it uses no encryption (`ITSAppUsesNonExemptEncryption` is NO in the app target's build settings), so App Store Connect doesn't ask the export compliance question on each upload. That's accurate as long as the app only uses the encryption built into iOS, such as HTTPS. If it ever adds its own encryption, change the setting and answer the question again.
+
 ## How the notifications work
 
 The phrase changes every day, so a single repeating notification can't carry it. Instead the app books one notification per day for the next 60 days, each with that day's phrase. iOS allows at most 64 pending notifications per app. The schedule is rebuilt every time the app opens or a setting changes, so the notifications keep coming as long as the app is opened at least once every two months.
