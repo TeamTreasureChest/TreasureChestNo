@@ -33,6 +33,8 @@ There's also a native iOS version in the [`ios/`](ios/) folder, with a daily not
 | File | What it is |
 |---|---|
 | `index.html` | The whole app: page, styles, phrases and script |
+| `support.html` | Support page with contact details and common questions. Use its address as the App Store support URL |
+| `privacy.html` | Privacy policy. Use its address as the App Store privacy policy URL |
 | `manifest.webmanifest` | App name, colours and icons for installing it |
 | `sw.js` | Offline support |
 | `icons/` | App icon, the same treasure chest as the iPhone app. The PNGs are resized from `ios/TreasureChestNo/Assets.xcassets/AppIcon.appiconset/AppIcon.png` |
