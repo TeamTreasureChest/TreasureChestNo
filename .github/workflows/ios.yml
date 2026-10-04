@@ -31,7 +31,7 @@ jobs:
       # UIDeviceFamily must list 2 (iPad), or iPads run the app in a small
       # iPhone-sized box. Check the app and the widget, and that they share
       # one version and build number.
-      - name: Check iPad support and version numbers
+      - name: Check iPad support, version numbers and encryption setting
         run: |
           set -euo pipefail
           app=build/Build/Products/Debug-iphonesimulator/TreasureChestNo.app
@@ -48,3 +48,6 @@ jobs:
             echo "$key: app $a, widget $w"
             test "$a" = "$w"
           done
+          # Answers App Store Connect's export compliance question on upload.
+          echo "ITSAppUsesNonExemptEncryption: $(plutil -extract ITSAppUsesNonExemptEncryption raw -o - "$app/Info.plist")"
+          test "$(plutil -extract ITSAppUsesNonExemptEncryption raw -o - "$app/Info.plist")" = false
