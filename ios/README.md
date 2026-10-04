@@ -27,6 +27,15 @@ If the App Group isn't set up (for example with a free Apple ID), the app still 
 
 With a free Apple ID, apps installed this way stop opening after 7 days and need running from Xcode again. A paid Apple Developer account removes that limit and lets you share the app through TestFlight or the App Store.
 
+## Changing the version number
+
+The version and build number are set once for the whole project, and the app and widgets both use them. In Xcode, click the blue **TreasureChestNo** project icon, select the **project** (not a target) under **PROJECT**, open **Build Settings**, and change:
+
+- **Marketing Version**: the version people see, such as `1.1`.
+- **Current Project Version**: the build number. It must go up for every upload to TestFlight or the App Store.
+
+Don't change them on a target's **General** tab. That saves a separate copy on that target, and the app and widgets fall out of step.
+
 ## How the notifications work
 
 The phrase changes every day, so a single repeating notification can't carry it. Instead the app books one notification per day for the next 60 days, each with that day's phrase. iOS allows at most 64 pending notifications per app. The schedule is rebuilt every time the app opens or a setting changes, so the notifications keep coming as long as the app is opened at least once every two months.
