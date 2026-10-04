@@ -5,6 +5,7 @@ struct ContentView: View {
     @AppStorage(SettingsKey.includeSwearing, store: SharedDefaults.store) private var includeSwearing = false
     @AppStorage(SettingsKey.layout, store: SharedDefaults.store) private var layout = PageLayout.classic
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.horizontalSizeClass) private var sizeClass
 
     @State private var today = Date()
     @State private var offset = 0
@@ -19,50 +20,48 @@ struct ContentView: View {
 
     private var palette: Palette { layout.palette }
 
+    /// iPad, or a wide iPad window in Split View.
+    private var isRegular: Bool { sizeClass == .regular }
+
+    /// How much bigger the calendar page is drawn on iPad.
+    private var pageScale: CGFloat { isRegular ? 1.35 : 1 }
+
     private var rotation: [Phrase] { Phrases.rotation(includeSwearing: includeSwearing) }
 
     private var phrase: Phrase { Phrases.phrase(for: shownDate, includeSwearing: includeSwearing) }
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 18) {
-                    CalendarPage(date: shownDate, offset: offset, phrase: phrase, layout: layout)
-                        .contentShape(Rectangle())
-                        .simultaneousGesture(swipe)
-
-                    controls
-
-                    HStack(spacing: 24) {
-                        ShareLink(item: phrase.text) {
-                            Label(offset == 0 ? "Share today's no" : "Share this no", systemImage: "square.and.arrow.up")
+            GeometryReader { geometry in
+                ScrollView {
+                    // Side by side on a wide iPad screen (landscape, or a
+                    // big Split View window); one column everywhere else.
+                    if isRegular && geometry.size.width >= 900 {
+                        HStack(alignment: .top, spacing: 32) {
+                            pageColumn
+                                .frame(maxWidth: 600)
+                            VStack(spacing: 18) {
+                                PhraseList(phrases: rotation, current: phrase, layout: layout, alwaysOpen: true)
+                                if layout == .treasure { banner }
+                            }
+                            .frame(maxWidth: 440)
                         }
-                        if offset != 0 {
-                            Button("Back to today") { move(to: 0) }
+                        .padding(.horizontal, 32)
+                        .padding(.vertical, 24)
+                        .frame(maxWidth: 1120)
+                        .frame(maxWidth: .infinity)
+                    } else {
+                        VStack(spacing: 18) {
+                            pageColumn
+                            PhraseList(phrases: rotation, current: phrase, layout: layout)
+                            if layout == .treasure { banner }
                         }
-                    }
-                    .font(layout.labelFont(.footnote).weight(.medium))
-                    .textCase(.uppercase)
-                    .tint(palette.accent)
-
-                    PhraseList(phrases: rotation, current: phrase, layout: layout)
-
-                    if layout == .treasure {
-                        Text("Five people · One team · Endless potential")
-                            .font(TreasureTheme.hand(size: 15, bold: true, relativeTo: .footnote))
-                            .foregroundStyle(TreasureTheme.parchment)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 12)
-                            .padding(.horizontal, 14)
-                            .background(TreasureTheme.wood, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            .padding(.top, 8)
+                        .padding(.horizontal, isRegular ? 32 : 16)
+                        .padding(.vertical, isRegular ? 24 : 12)
+                        .frame(maxWidth: isRegular ? 640 : 480)
+                        .frame(maxWidth: .infinity)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .frame(maxWidth: 480)
-                .frame(maxWidth: .infinity)
             }
             .background(palette.ground.ignoresSafeArea())
             .navigationTitle("TreasureChestNo")
@@ -97,6 +96,41 @@ struct ContentView: View {
             offset = 0
             showCopied()
         }
+    }
+
+    /// The calendar page with the day buttons and share link under it.
+    private var pageColumn: some View {
+        VStack(spacing: 18) {
+            CalendarPage(date: shownDate, offset: offset, phrase: phrase, layout: layout, scale: pageScale)
+                .contentShape(Rectangle())
+                .simultaneousGesture(swipe)
+
+            controls
+
+            HStack(spacing: 24) {
+                ShareLink(item: phrase.text) {
+                    Label(offset == 0 ? "Share today's no" : "Share this no", systemImage: "square.and.arrow.up")
+                }
+                if offset != 0 {
+                    Button("Back to today") { move(to: 0) }
+                }
+            }
+            .font(layout.labelFont(.footnote).weight(.medium))
+            .textCase(.uppercase)
+            .tint(palette.accent)
+        }
+    }
+
+    private var banner: some View {
+        Text("Five people · One team · Endless potential")
+            .font(TreasureTheme.hand(size: 15, bold: true, relativeTo: .footnote))
+            .foregroundStyle(TreasureTheme.parchment)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .padding(.horizontal, 14)
+            .background(TreasureTheme.wood, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .padding(.top, 8)
     }
 
     /// The app name with the treasure chest icon, in the navigation bar.
@@ -174,6 +208,8 @@ private struct CalendarPage: View {
     let offset: Int
     let phrase: Phrase
     let layout: PageLayout
+    /// 1 on iPhone. Bigger on iPad, where the page has more room.
+    var scale: CGFloat = 1
 
     private var palette: Palette { layout.palette }
     private var treasure: Bool { layout == .treasure }
@@ -185,20 +221,22 @@ private struct CalendarPage: View {
                 Spacer()
                 Text(date, format: .dateTime.year())
             }
-            .font(treasure ? TreasureTheme.marker(size: 17) : .system(.footnote, design: .monospaced))
+            .font(treasure
+                  ? TreasureTheme.marker(size: 17 * scale)
+                  : scale > 1 ? .system(size: 13 * scale, design: .monospaced) : .system(.footnote, design: .monospaced))
             .textCase(.uppercase)
             .tracking(1)
             .foregroundStyle(treasure ? TreasureTheme.gold : .white)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 18 * scale)
+            .padding(.vertical, 12 * scale)
             .background {
                 if treasure { TreasureTheme.wood } else { Theme.bar }
             }
 
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 14 * scale) {
                 HStack(alignment: .bottom) {
                     Text(date, format: .dateTime.day())
-                        .font(treasure ? TreasureTheme.marker(size: 64) : .system(size: 64, weight: .heavy))
+                        .font(treasure ? TreasureTheme.marker(size: 64 * scale) : .system(size: 64 * scale, weight: .heavy))
                         .monospacedDigit()
                         .foregroundStyle(palette.dayNumber)
                     Spacer()
@@ -224,10 +262,10 @@ private struct CalendarPage: View {
                     .foregroundStyle(palette.cardMuted)
 
                 Text(phrase.text)
-                    .font(layout.phraseFont(size: phraseSize))
+                    .font(layout.phraseFont(size: phraseSize * scale))
                     .tracking(treasure ? 0 : -0.5)
                     .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: .infinity, minHeight: 130, alignment: .leading)
+                    .frame(maxWidth: .infinity, minHeight: 130 * scale, alignment: .leading)
                     .id(phrase.id)
                     .transition(.opacity)
 
@@ -250,7 +288,7 @@ private struct CalendarPage: View {
                 }
             }
             .foregroundStyle(palette.cardInk)
-            .padding(22)
+            .padding(22 * scale)
         }
         .background {
             if treasure {
@@ -310,39 +348,56 @@ private struct PhraseList: View {
     let phrases: [Phrase]
     let current: Phrase
     let layout: PageLayout
+    /// Shown open with no way to fold it away, for the side column on iPad.
+    var alwaysOpen = false
     @State private var expanded = false
 
     private var palette: Palette { layout.palette }
 
     var body: some View {
-        DisclosureGroup(isExpanded: $expanded) {
-            VStack(spacing: 0) {
-                ForEach(phrases) { item in
-                    HStack(alignment: .firstTextBaseline, spacing: 12) {
-                        Text(item.text)
-                            .font(layout == .treasure ? TreasureTheme.hand(size: 17, bold: item == current) : .body)
-                            .fontWeight(item == current ? .semibold : .regular)
-                            .foregroundStyle(item == current ? palette.accent : palette.ink)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(item.tone)
-                            .font(layout.labelFont(.caption2))
-                            .textCase(.uppercase)
-                            .foregroundStyle(palette.muted)
-                    }
-                    .padding(.vertical, 12)
-                    Rectangle().fill(palette.line).frame(height: 1)
-                }
+        if alwaysOpen {
+            VStack(alignment: .leading, spacing: 4) {
+                heading
+                rows
             }
-            .padding(.top, 4)
-        } label: {
-            Text("All \(phrases.count) ways to say no")
-                .font(layout.labelFont(.footnote))
-                .textCase(.uppercase)
-                .tracking(1)
-                .foregroundStyle(palette.muted)
+        } else {
+            DisclosureGroup(isExpanded: $expanded) {
+                rows
+            } label: {
+                heading
+            }
+            .tint(palette.muted)
+            .padding(.top, 8)
         }
-        .tint(palette.muted)
-        .padding(.top, 8)
+    }
+
+    private var heading: some View {
+        Text("All \(phrases.count) ways to say no")
+            .font(layout.labelFont(.footnote))
+            .textCase(.uppercase)
+            .tracking(1)
+            .foregroundStyle(palette.muted)
+    }
+
+    private var rows: some View {
+        VStack(spacing: 0) {
+            ForEach(phrases) { item in
+                HStack(alignment: .firstTextBaseline, spacing: 12) {
+                    Text(item.text)
+                        .font(layout == .treasure ? TreasureTheme.hand(size: 17, bold: item == current) : .body)
+                        .fontWeight(item == current ? .semibold : .regular)
+                        .foregroundStyle(item == current ? palette.accent : palette.ink)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(item.tone)
+                        .font(layout.labelFont(.caption2))
+                        .textCase(.uppercase)
+                        .foregroundStyle(palette.muted)
+                }
+                .padding(.vertical, 12)
+                Rectangle().fill(palette.line).frame(height: 1)
+            }
+        }
+        .padding(.top, 4)
     }
 }
 
