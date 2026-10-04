@@ -26,4 +26,25 @@ jobs:
             -scheme TreasureChestNo \
             -configuration Debug \
             -destination "generic/platform=iOS Simulator" \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO
+      # UIDeviceFamily must list 2 (iPad), or iPads run the app in a small
+      # iPhone-sized box. Check the app and the widget, and that they share
+      # one version and build number.
+      - name: Check iPad support and version numbers
+        run: |
+          set -euo pipefail
+          app=build/Build/Products/Debug-iphonesimulator/TreasureChestNo.app
+          widget="$app/PlugIns/TreasureChestNoWidget.appex"
+          for plist in "$app/Info.plist" "$widget/Info.plist"; do
+            echo "$plist"
+            plutil -extract UIDeviceFamily json -o - "$plist"
+            echo
+            plutil -extract UIDeviceFamily json -o - "$plist" | grep -q 2
+          done
+          for key in CFBundleShortVersionString CFBundleVersion; do
+            a=$(plutil -extract "$key" raw -o - "$app/Info.plist")
+            w=$(plutil -extract "$key" raw -o - "$widget/Info.plist")
+            echo "$key: app $a, widget $w"
+            test "$a" = "$w"
+          done
